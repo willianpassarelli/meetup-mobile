@@ -5,6 +5,8 @@ import { useDispatch, useSelector } from 'react-redux';
 import Background from '~/components/Background';
 import logo from '~/assets/logo.png';
 
+import { signInRequest } from '~/store/modules/auth/actions';
+
 import {
   Container,
   Form,
@@ -14,8 +16,6 @@ import {
   SignLinkText,
 } from './styles';
 
-function handleSubmit() {}
-
 export default function SignIn({ navigation }) {
   const passwordRef = useRef();
   const dispatch = useDispatch();
@@ -24,6 +24,10 @@ export default function SignIn({ navigation }) {
   const [password, setPassword] = useState();
 
   const loading = useSelector(state => state.auth.loading);
+
+  function handleSubmit() {
+    dispatch(signInRequest(email, password));
+  }
 
   return (
     <Background>
