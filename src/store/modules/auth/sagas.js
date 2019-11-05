@@ -4,6 +4,7 @@ import { takeLatest, call, put, all } from 'redux-saga/effects';
 import { signInSuccess, signFailure } from './actions';
 
 import api from '~/services/api';
+import NavigationService from '~/services/navigation';
 
 export function* signIn({ payload }) {
   try {
@@ -19,8 +20,6 @@ export function* signIn({ payload }) {
     api.defaults.headers.Authorization = `Bearer ${token}`;
 
     yield put(signInSuccess(token, user));
-
-    // history.push('/dashboard');
   } catch (err) {
     Alert.alert('Autenticação', 'Falha na autenticação, verifique seus dados');
 
@@ -38,7 +37,7 @@ export function* signUp({ payload }) {
       password,
     });
 
-    // history.push('/');
+    NavigationService.navigate('SignIn');
   } catch (err) {
     Alert.alert(
       'Cadastro',
@@ -47,10 +46,6 @@ export function* signUp({ payload }) {
 
     yield put(signFailure());
   }
-}
-
-export function signOut() {
-  // history.push('/');
 }
 
 export function setToken({ payload }) {
@@ -66,6 +61,5 @@ export function setToken({ payload }) {
 export default all([
   takeLatest('@auth/SIGN_IN_REQUEST', signIn),
   takeLatest('@auth/SIGN_UP_REQUEST', signUp),
-  takeLatest('@auth/SIGN_OUT', signOut),
   takeLatest('persist/REHYDRATE', setToken),
 ]);
