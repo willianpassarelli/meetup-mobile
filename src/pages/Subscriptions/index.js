@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react';
-
+import { Alert } from 'react-native';
+import { withNavigationFocus } from 'react-navigation';
 import Icon from 'react-native-vector-icons/MaterialIcons';
 
 import Background from '~/components/Background';
@@ -9,17 +10,30 @@ import Card from '~/components/Card';
 import api from '~/services/api';
 import { Container, List } from './styles';
 
-export default function Subscriptions() {
+function Subscriptions({ isFocused }) {
   const [subscriptions, setSubscriptions] = useState([]);
 
-  useEffect(() => {
-    async function loadSubscriptions() {
+  async function loadSubscriptions() {
+    try {
       const response = await api.get('subscriptions');
-
       setSubscriptions(response.data);
+    } catch (err) {
+      console.tron.log('@err', err.message);
     }
+  }
+
+  useEffect(() => {
     loadSubscriptions();
-  }, []);
+  }, [isFocused]);
+
+  async function handleCancel(id) {
+    try {
+      await api.delete(`subscriptions/${id}`);
+      Alert.alert('Inscrições', 'Inscrição cancelada com sucesso!');
+    } catch (err) {
+      Alert.alert('Inscrições', 'Não foi possivel cancelar a inscrição.');
+    }
+  }
 
   return (
     <Background>
@@ -27,8 +41,11 @@ export default function Subscriptions() {
       <Container>
         <List
           data={subscriptions}
+          extraData={loadSubscriptions()}
           keyExtractor={item => String(item.id)}
-          renderItem={({ item }) => <Card data={item.Meetup} />}
+          renderItem={({ item }) => (
+            <Card onCancel={() => handleCancel(item.id)} data={item} />
+          )}
         />
       </Container>
     </Background>
@@ -41,3 +58,5 @@ Subscriptions.navigationOptions = {
     <Icon name="local-offer" size={20} color={tintColor} />
   ),
 };
+
+export default withNavigationFocus(Subscriptions);
