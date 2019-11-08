@@ -41,10 +41,14 @@ function Subscriptions({ isFocused }) {
       <Container>
         <List
           data={subscriptions}
-          extraData={loadSubscriptions()}
+          // extraData={loadSubscriptions()}
           keyExtractor={item => String(item.id)}
           renderItem={({ item }) => (
-            <Card onCancel={() => handleCancel(item.id)} data={item} />
+            <Card
+              onSubmit={() => handleCancel(item.id)}
+              textButton="Cancelar inscrição"
+              data={item}
+            />
           )}
         />
       </Container>
