@@ -44,4 +44,6 @@ export const CancelButton = styled(Button)`
   height: 40px;
   background: #d44059;
   margin-top: 10px;
+
+  opacity: ${props => (props.past ? 0.7 : 1)};
 `;
